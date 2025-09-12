@@ -1,0 +1,8 @@
+com\apc\billing\model\Invoice.class
+com\apc\inventory\service\InventoryService.class
+com\apc\config\HibernateUtil.class
+com\apc\inventory\dao\ItemDao.class
+com\apc\inventory\model\Item.class
+com\apc\billing\dao\InvoiceDao.class
+com\apc\billing\service\BillingService.class
+com\apc\Main.class
