@@ -139,11 +139,40 @@ public class Main {
                         scanner.nextLine();
                         switch (billChoice) {
                             case 1:
-                                System.out.print("Total amount: ");
-                                double amt = scanner.nextDouble();
+                                System.out.print("Enter item ID or name: ");
+                                String itemInput = scanner.nextLine();
+                                com.apc.inventory.model.Item item = null;
+                                try {
+                                    int itemId = Integer.parseInt(itemInput);
+                                    item = inventoryService.listItems(session).stream()
+                                        .filter(i -> i.getId() == itemId)
+                                        .findFirst().orElse(null);
+                                } catch (NumberFormatException e) {
+                                    item = inventoryService.listItems(session).stream()
+                                        .filter(i -> i.getName().equalsIgnoreCase(itemInput))
+                                        .findFirst().orElse(null);
+                                }
+                                if (item == null) {
+                                    System.out.println("Item not found in inventory.");
+                                    break;
+                                }
+                                System.out.print("Enter quantity: ");
+                                int billQty = scanner.nextInt();
                                 scanner.nextLine();
-                                billingService.createInvoice(session, amt);
-                                System.out.println("Invoice created.");
+                                double baseTotal = billQty * item.getPrice();
+                                double gstRate = 0.18; // 18% GST
+                                double gstAmount = baseTotal * gstRate;
+                                double finalTotal = baseTotal + gstAmount;
+                                System.out.printf("Base Total: %.2f\nGST (18%%): %.2f\nFinal Amount: %.2f\n",
+                                    baseTotal, gstAmount, finalTotal);
+                                if (item.getQuantity() < billQty) {
+                                    System.out.println("Not enough quantity in inventory. Available: " + item.getQuantity());
+                                    break;
+                                }
+                                // Deduct quantity from inventory
+                                inventoryService.updateItem(session, item.getId(), item.getQuantity() - billQty, item.getPrice());
+                                billingService.createInvoice(session, finalTotal);
+                                System.out.println("Invoice created for item: " + item.getName());
                                 break;
                             case 2:
                                 System.out.println("Invoices:");
