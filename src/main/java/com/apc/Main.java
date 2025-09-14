@@ -12,8 +12,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Session session = HibernateUtil.getSessionFactory().openSession();
         AuthService authService = new AuthService();
-        InventoryService inventoryService = new InventoryService();
-        BillingService billingService = new BillingService();
+    InventoryService inventoryService = new InventoryService();
+    BillingService billingService = new BillingService();
+    com.apc.purchase.PurchaseService purchaseService = new com.apc.purchase.PurchaseService();
 
         boolean authenticated = false;
         while (!authenticated) {
@@ -45,8 +46,16 @@ public class Main {
                     if (authService.authenticate(session, newUser, newPass)) {
                         System.out.println("User already exists! Please login.");
                     } else {
-                        authService.register(session, newUser, newPass);
-                        System.out.println("Registration successful!");
+                        try {
+                            authService.register(session, newUser, newPass);
+                            System.out.println("Registration successful!");
+                        } catch (Exception e) {
+                            if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry")) {
+                                System.out.println("Username already exists, please choose a different one.");
+                            } else {
+                                System.out.println("Registration failed: " + e.getMessage());
+                            }
+                        }
                     }
                     break;
                 case 3:
@@ -63,8 +72,9 @@ public class Main {
         while (running) {
             System.out.println("\nMain Menu");
             System.out.println("1. Inventory Management");
-            System.out.println("2. Billing System");
-            System.out.println("3. Logout");
+            System.out.println("2. Billing System (Sales)");
+            System.out.println("3. Purchases");
+            System.out.println("4. Logout");
             System.out.print("Choose an option: ");
             int mainChoice = scanner.nextInt();
             scanner.nextLine();
@@ -205,6 +215,45 @@ public class Main {
                     }
                     break;
                 case 3:
+                    boolean purchaseMenu = true;
+                    while (purchaseMenu) {
+                        System.out.println("\nPurchase Menu");
+                        System.out.println("1. Add Purchase");
+                        System.out.println("2. View Purchases");
+                        System.out.println("3. Back");
+                        System.out.print("Choose an option: ");
+                        int purChoice = scanner.nextInt();
+                        scanner.nextLine();
+                        switch (purChoice) {
+                            case 1:
+                                System.out.print("Supplier name: ");
+                                String supplier = scanner.nextLine();
+                                System.out.print("Item name: ");
+                                String pItemName = scanner.nextLine();
+                                System.out.print("Quantity: ");
+                                int pQty = scanner.nextInt();
+                                System.out.print("Price: ");
+                                double pPrice = scanner.nextDouble();
+                                scanner.nextLine();
+                                purchaseService.addPurchase(session, supplier, pItemName, pQty, pPrice);
+                                inventoryService.addItem(session, pItemName, pQty, pPrice);
+                                System.out.println("Purchase added and inventory updated.");
+                                break;
+                            case 2:
+                                System.out.println("Purchases:");
+                                purchaseService.listPurchases(session).forEach(pur ->
+                                    System.out.println(pur.getId() + ": Supplier: " + pur.getSupplier() + ", Item: " + pur.getItemName() + ", Qty: " + pur.getQuantity() + ", Price: " + pur.getPrice() + ", Date: " + pur.getDate())
+                                );
+                                break;
+                            case 3:
+                                purchaseMenu = false;
+                                break;
+                            default:
+                                System.out.println("Invalid option.");
+                        }
+                    }
+                    break;
+                case 4:
                     System.out.println("Logging out...");
                     authenticated = false;
                     running = false;

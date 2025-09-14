@@ -26,5 +26,6 @@
     <mapping class="com.apc.inventory.model.Item"/>
     <mapping class="com.apc.billing.model.Invoice"/>
     <mapping class="com.apc.auth.User"/>
+    <mapping class="com.apc.purchase.Purchase"/>
     </session-factory>
 </hibernate-configuration>
