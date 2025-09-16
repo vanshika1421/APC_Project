@@ -6,8 +6,8 @@ import java.util.Date;
 @Entity
 @Table(name = "purchases")
 public class Purchase {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id  
+    @GeneratedValue(strategy = GenerationType.IDENTITY)   //autoIncrement
     private int id;
 
     private String supplier;

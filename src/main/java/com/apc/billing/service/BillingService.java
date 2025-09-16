@@ -1,13 +1,19 @@
 package com.apc.billing.service;
 
 import com.apc.billing.dao.InvoiceDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.apc.billing.model.Invoice;
 import org.hibernate.Session;
 import java.util.Date;
 import java.util.List;
 
 public class BillingService {
-    private final InvoiceDao invoiceDao = new InvoiceDao();
+    @Autowired
+    private InvoiceDao invoiceDao;
+
+    public void setInvoiceDao(InvoiceDao invoiceDao) {
+        this.invoiceDao = invoiceDao;
+    }
 
     public void createInvoice(Session session, double totalAmount) {
         Invoice invoice = new Invoice(totalAmount, new Date());

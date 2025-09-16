@@ -1,20 +1,26 @@
 package com.apc;
 
+
 import com.apc.config.HibernateUtil;
 import com.apc.inventory.service.InventoryService;
 import com.apc.billing.service.BillingService;
 import com.apc.auth.AuthService;
+import com.apc.purchase.PurchaseService;
 import org.hibernate.Session;
 import java.util.Scanner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
         Session session = HibernateUtil.getSessionFactory().openSession();
-        AuthService authService = new AuthService();
-    InventoryService inventoryService = new InventoryService();
-    BillingService billingService = new BillingService();
-    com.apc.purchase.PurchaseService purchaseService = new com.apc.purchase.PurchaseService();
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        AuthService authService = context.getBean("authService", AuthService.class);
+        InventoryService inventoryService = context.getBean("inventoryService", InventoryService.class);
+        BillingService billingService = context.getBean("billingService", BillingService.class);
+        PurchaseService purchaseService = context.getBean("purchaseService", PurchaseService.class);
 
         boolean authenticated = false;
         while (!authenticated) {
@@ -31,11 +37,16 @@ public class Main {
                     String username = scanner.nextLine();
                     System.out.print("Password: ");
                     String password = scanner.nextLine();
-                    if (authService.authenticate(session, username, password)) {
-                        System.out.println("Login successful!");
-                        authenticated = true;
-                    } else {
-                        System.out.println("Invalid credentials. Try again.");
+                    try {
+                        if (authService.authenticate(session, username, password)) {
+                            System.out.println("Login successful!");
+                            authenticated = true;
+                        } else {
+                            System.out.println("Invalid credentials. Try again.");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error during authentication: " + e.getMessage());
+                        session.clear();
                     }
                     break;
                 case 2:
@@ -43,19 +54,25 @@ public class Main {
                     String newUser = scanner.nextLine();
                     System.out.print("Choose a password: ");
                     String newPass = scanner.nextLine();
-                    if (authService.authenticate(session, newUser, newPass)) {
-                        System.out.println("User already exists! Please login.");
-                    } else {
-                        try {
-                            authService.register(session, newUser, newPass);
-                            System.out.println("Registration successful!");
-                        } catch (Exception e) {
-                            if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry")) {
-                                System.out.println("Username already exists, please choose a different one.");
-                            } else {
-                                System.out.println("Registration failed: " + e.getMessage());
+                    try {
+                        if (authService.authenticate(session, newUser, newPass)) {
+                            System.out.println("User already exists! Please login.");
+                        } else {
+                            try {
+                                authService.register(session, newUser, newPass);
+                                System.out.println("Registration successful!");
+                            } catch (Exception e) {
+                                if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry")) {
+                                    System.out.println("Username already exists, please choose a different one.");
+                                } else {
+                                    System.out.println("Registration failed: " + e.getMessage());
+                                }
+                                session.clear();
                             }
                         }
+                    } catch (Exception e) {
+                        System.out.println("Error during registration: " + e.getMessage());
+                        session.clear();
                     }
                     break;
                 case 3:

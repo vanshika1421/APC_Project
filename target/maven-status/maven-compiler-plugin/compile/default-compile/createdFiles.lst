@@ -1,8 +1,14 @@
+com\apc\inventory\dao\ItemDao.class
+com\apc\auth\User.class
+com\apc\purchase\Purchase.class
+com\apc\billing\service\BillingService.class
+com\apc\auth\AuthService.class
+com\apc\auth\UserDao.class
 com\apc\billing\model\Invoice.class
+com\apc\purchase\PurchaseService.class
 com\apc\inventory\service\InventoryService.class
 com\apc\config\HibernateUtil.class
-com\apc\inventory\dao\ItemDao.class
+com\apc\purchase\PurchaseDao.class
 com\apc\inventory\model\Item.class
 com\apc\billing\dao\InvoiceDao.class
-com\apc\billing\service\BillingService.class
 com\apc\Main.class
