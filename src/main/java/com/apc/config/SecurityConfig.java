@@ -17,15 +17,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .csrf().disable() // Disable CSRF for API endpoints
             .authorizeRequests()
-                .antMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
-                .antMatchers("/h2-console/**").permitAll() // Allow H2 console access
-                .antMatchers("/", "/login.html", "/register.html", "/dashboard.html", "/inventory.html", "/billing.html", "/purchase.html").permitAll() // Allow all static pages
-                .antMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll() // Allow static resources
-                .antMatchers("/api/**").authenticated() // Require authentication for API endpoints only
-                .anyRequest().permitAll() // Allow all other requests (for static content)
+                .anyRequest().permitAll() // Allow all requests (we'll handle auth in frontend)
             .and()
-            .httpBasic() // Keep HTTP Basic for API endpoints
-            .and()
+            .httpBasic().disable() // Disable HTTP Basic authentication completely
             .formLogin().disable(); // Disable default form login
 
         // Allow H2 console to be embedded in frames

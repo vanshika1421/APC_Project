@@ -258,13 +258,10 @@
                 }
             });
 
-            // Check if already logged in
-            if (localStorage.getItem('username')) {
-                showAlert('You are already logged in. Redirecting...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1000);
-            }
+            // Clear any existing login data when user visits login page
+            // This ensures a fresh login experience
+            localStorage.removeItem('username');
+            localStorage.removeItem('password');
         });
     </script>
 </body>
