@@ -49,9 +49,13 @@ public class InventoryController {
     @DeleteMapping("/items/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable int id) {
         try {
+            System.out.println("Attempting to delete item with ID: " + id);
             inventoryService.removeItem(id);
+            System.out.println("Successfully deleted item with ID: " + id);
             return ResponseEntity.ok("Item deleted successfully");
         } catch (Exception e) {
+            System.err.println("Error deleting item with ID " + id + ": " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error deleting item: " + e.getMessage());
         }
     }

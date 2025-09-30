@@ -28,7 +28,11 @@ public class ItemDao {
     }
 
     public void deleteItem(Item item) {
-        entityManager.remove(entityManager.contains(item) ? item : entityManager.merge(item));
+        if (item != null) {
+            Item managedItem = entityManager.contains(item) ? item : entityManager.merge(item);
+            entityManager.remove(managedItem);
+            entityManager.flush(); // Ensure deletion is executed immediately
+        }
     }
 
     public Item getItemByName(String name) {

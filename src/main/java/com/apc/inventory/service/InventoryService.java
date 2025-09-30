@@ -42,6 +42,8 @@ public class InventoryService {
         Item item = itemDao.getItemById(id);
         if (item != null) {
             itemDao.deleteItem(item);
+        } else {
+            throw new RuntimeException("Item with ID " + id + " not found");
         }
     }
 
