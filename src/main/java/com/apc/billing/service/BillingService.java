@@ -1,12 +1,14 @@
 package com.apc.billing.service;
 
 import com.apc.billing.dao.InvoiceDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.apc.billing.model.Invoice;
-import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class BillingService {
     @Autowired
     private InvoiceDao invoiceDao;
@@ -15,27 +17,31 @@ public class BillingService {
         this.invoiceDao = invoiceDao;
     }
 
-    public void createInvoice(Session session, double totalAmount) {
+    @Transactional
+    public void createInvoice(double totalAmount) {
         Invoice invoice = new Invoice(totalAmount, new Date());
-        invoiceDao.saveInvoice(session, invoice);
+        invoiceDao.saveInvoice(invoice);
     }
 
-    public List<Invoice> listInvoices(Session session) {
-        return invoiceDao.getAllInvoices(session);
+    @Transactional(readOnly = true)
+    public List<Invoice> listInvoices() {
+        return invoiceDao.getAllInvoices();
     }
 
-    public void updateInvoice(Session session, int id, double totalAmount) {
-        Invoice invoice = invoiceDao.getInvoiceById(session, id);
+    @Transactional
+    public void updateInvoice(int id, double totalAmount) {
+        Invoice invoice = invoiceDao.getInvoiceById(id);
         if (invoice != null) {
             invoice.setTotalAmount(totalAmount);
-            invoiceDao.updateInvoice(session, invoice);
+            invoiceDao.updateInvoice(invoice);
         }
     }
 
-    public void removeInvoice(Session session, int id) {
-        Invoice invoice = invoiceDao.getInvoiceById(session, id);
+    @Transactional
+    public void removeInvoice(int id) {
+        Invoice invoice = invoiceDao.getInvoiceById(id);
         if (invoice != null) {
-            invoiceDao.deleteInvoice(session, invoice);
+            invoiceDao.deleteInvoice(invoice);
         }
     }
 }

@@ -1,36 +1,33 @@
 package com.apc.billing.dao;
 
 import com.apc.billing.model.Invoice;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Repository
 public class InvoiceDao {
-    public void saveInvoice(Session session, Invoice invoice) {
-        Transaction tx = session.beginTransaction();
-        session.save(invoice);
-        tx.commit();
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    public void saveInvoice(Invoice invoice) {
+        entityManager.persist(invoice);
     }
 
-    public Invoice getInvoiceById(Session session, int id) {
-        return session.get(Invoice.class, id);
+    public Invoice getInvoiceById(int id) {
+        return entityManager.find(Invoice.class, id);
     }
 
-    public List<Invoice> getAllInvoices(Session session) {
-        Query<Invoice> query = session.createQuery("from Invoice", Invoice.class);
-        return query.list();
+    public List<Invoice> getAllInvoices() {
+        return entityManager.createQuery("SELECT i FROM Invoice i", Invoice.class).getResultList();
     }
 
-    public void updateInvoice(Session session, Invoice invoice) {
-        Transaction tx = session.beginTransaction();
-        session.update(invoice);
-        tx.commit();
+    public void updateInvoice(Invoice invoice) {
+        entityManager.merge(invoice);
     }
 
-    public void deleteInvoice(Session session, Invoice invoice) {
-        Transaction tx = session.beginTransaction();
-        session.delete(invoice);
-        tx.commit();
+    public void deleteInvoice(Invoice invoice) {
+        entityManager.remove(entityManager.contains(invoice) ? invoice : entityManager.merge(invoice));
     }
 }

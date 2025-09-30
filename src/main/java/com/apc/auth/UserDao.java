@@ -1,19 +1,25 @@
 package com.apc.auth;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
+@Repository
 public class UserDao {
-    public void saveUser(Session session, User user) {
-        Transaction tx = session.beginTransaction();
-        session.save(user);
-        tx.commit();
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    public void saveUser(User user) {
+        entityManager.persist(user);
     }
 
-    public User getUserByUsername(Session session, String username) {
-        Query<User> query = session.createQuery("from User where username = :username", User.class);
-        query.setParameter("username", username);
-        return query.uniqueResult();
+    public User getUserByUsername(String username) {
+        try {
+            return entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

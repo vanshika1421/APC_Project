@@ -20,7 +20,7 @@ public class Invoice {
         this.date = date;
     }
 
-    // Getters and setters
+ 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public double getTotalAmount() { return totalAmount; }

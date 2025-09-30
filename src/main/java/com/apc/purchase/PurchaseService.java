@@ -1,15 +1,14 @@
-
 package com.apc.purchase;
 
-import org.springframework.stereotype.Component;
-
-import org.hibernate.Session;
+import com.apc.purchase.PurchaseDao;
+import com.apc.purchase.Purchase;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-@Component
+@Service
 public class PurchaseService {
     @Autowired
     private PurchaseDao purchaseDao;
@@ -18,12 +17,14 @@ public class PurchaseService {
         this.purchaseDao = purchaseDao;
     }
 
-    public void addPurchase(Session session, String supplier, String itemName, int quantity, double price) {
+    @Transactional
+    public void addPurchase(String supplier, String itemName, int quantity, double price) {
         Purchase purchase = new Purchase(supplier, itemName, quantity, price, new Date());
-        purchaseDao.savePurchase(session, purchase);
+        purchaseDao.savePurchase(purchase);
     }
 
-    public List<Purchase> listPurchases(Session session) {
-        return purchaseDao.getAllPurchases(session);
+    @Transactional(readOnly = true)
+    public List<Purchase> listPurchases() {
+        return purchaseDao.getAllPurchases();
     }
 }

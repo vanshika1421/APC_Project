@@ -1,19 +1,21 @@
 package com.apc.purchase;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Repository
 public class PurchaseDao {
-    public void savePurchase(Session session, Purchase purchase) {
-        Transaction tx = session.beginTransaction();
-        session.save(purchase);
-        tx.commit();
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public void savePurchase(Purchase purchase) {
+        entityManager.persist(purchase);
     }
 
-    public List<Purchase> getAllPurchases(Session session) {
-        Query<Purchase> query = session.createQuery("from Purchase", Purchase.class);
-        return query.list();
+    public List<Purchase> getAllPurchases() {
+        return entityManager.createQuery("SELECT p FROM Purchase p", Purchase.class).getResultList();
     }
 }

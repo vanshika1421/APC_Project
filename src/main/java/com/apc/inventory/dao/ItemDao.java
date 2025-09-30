@@ -1,36 +1,33 @@
 package com.apc.inventory.dao;
 
 import com.apc.inventory.model.Item;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Repository
 public class ItemDao {
-    public void saveItem(Session session, Item item) {
-        Transaction tx = session.beginTransaction();
-        session.save(item);
-        tx.commit();
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    public void saveItem(Item item) {
+        entityManager.persist(item);
     }
 
-    public Item getItemById(Session session, int id) {
-        return session.get(Item.class, id);
+    public Item getItemById(int id) {
+        return entityManager.find(Item.class, id);
     }
 
-    public List<Item> getAllItems(Session session) {
-        Query<Item> query = session.createQuery("from Item", Item.class);
-        return query.list();
+    public List<Item> getAllItems() {
+        return entityManager.createQuery("SELECT i FROM Item i", Item.class).getResultList();
     }
 
-    public void updateItem(Session session, Item item) {
-        Transaction tx = session.beginTransaction();
-        session.update(item);
-        tx.commit();
+    public void updateItem(Item item) {
+        entityManager.merge(item);
     }
 
-    public void deleteItem(Session session, Item item) {
-        Transaction tx = session.beginTransaction();
-        session.delete(item);
-        tx.commit();
+    public void deleteItem(Item item) {
+        entityManager.remove(entityManager.contains(item) ? item : entityManager.merge(item));
     }
 }
