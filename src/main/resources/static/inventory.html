@@ -362,7 +362,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="itemPrice">Price</label>
+                    <label for="itemPrice">Price (₹)</label>
                     <input type="number" id="itemPrice" name="price" step="0.01" required>
                 </div>
                 <div class="form-group">
@@ -466,9 +466,9 @@
                 itemsHtml += `
                     <div class="item-card">
                         <h4>${item.name}</h4>
-                        <p><strong>Price:</strong> $${item.price.toFixed(2)}</p>
+                        <p><strong>Price:</strong> ₹${item.price.toFixed(2)}</p>
                         <p><strong>Quantity:</strong> ${item.quantity}</p>
-                        <p><strong>Total Value:</strong> $${(item.price * item.quantity).toFixed(2)}</p>
+                        <p><strong>Total Value:</strong> ₹${(item.price * item.quantity).toFixed(2)}</p>
                         <div class="item-actions">
                             <button class="btn-small btn-edit" onclick="editItem(${item.id}, '${item.name}', ${item.price}, ${item.quantity})">
                                 ✏️ Edit
@@ -617,7 +617,7 @@
                 <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
                     <h4>Summary</h4>
                     <p><strong>Total Items:</strong> ${totalItems}</p>
-                    <p><strong>Total Inventory Value:</strong> $${totalValue.toFixed(2)}</p>
+                    <p><strong>Total Inventory Value:</strong> ₹${totalValue.toFixed(2)}</p>
                     <p><strong>Low Stock Items:</strong> ${lowStockItems.length} (quantity < 10)</p>
                 </div>
                 
