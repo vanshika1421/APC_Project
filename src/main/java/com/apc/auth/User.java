@@ -1,6 +1,6 @@
 package com.apc.auth;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
