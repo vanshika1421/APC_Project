@@ -30,4 +30,14 @@ public class ItemDao {
     public void deleteItem(Item item) {
         entityManager.remove(entityManager.contains(item) ? item : entityManager.merge(item));
     }
+
+    public Item getItemByName(String name) {
+        try {
+            return entityManager.createQuery("SELECT i FROM Item i WHERE i.name = :name", Item.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null; // Item not found
+        }
+    }
 }

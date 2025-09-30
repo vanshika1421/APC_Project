@@ -29,8 +29,15 @@ public class BillingController {
     @PostMapping("/invoices")
     public ResponseEntity<String> createInvoice(@RequestBody InvoiceRequest request) {
         try {
-            billingService.createInvoice(request.getTotalAmount());
-            return ResponseEntity.ok("Invoice created successfully");
+            if (request.getItems() != null && !request.getItems().isEmpty()) {
+                // New integrated billing with inventory management
+                billingService.createInvoiceWithItems(request.getItems());
+                return ResponseEntity.ok("Invoice created successfully with inventory updated");
+            } else {
+                // Legacy method for backward compatibility
+                billingService.createInvoice(request.getTotalAmount());
+                return ResponseEntity.ok("Invoice created successfully");
+            }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error creating invoice: " + e.getMessage());
         }
@@ -59,8 +66,12 @@ public class BillingController {
     // DTO for request body
     public static class InvoiceRequest {
         private double totalAmount;
+        private java.util.Map<String, Integer> items; // itemName -> quantity
 
         public double getTotalAmount() { return totalAmount; }
         public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+        
+        public java.util.Map<String, Integer> getItems() { return items; }
+        public void setItems(java.util.Map<String, Integer> items) { this.items = items; }
     }
 }

@@ -44,4 +44,54 @@ public class InventoryService {
             itemDao.deleteItem(item);
         }
     }
+
+    // ===== INTEGRATED STOCK MANAGEMENT METHODS =====
+    
+    /**
+     * Reduce stock quantity when items are sold (used by billing)
+     */
+    @Transactional
+    public boolean reduceStock(String itemName, int quantity) {
+        Item item = itemDao.getItemByName(itemName);
+        if (item != null && item.getQuantity() >= quantity) {
+            item.setQuantity(item.getQuantity() - quantity);
+            itemDao.updateItem(item);
+            return true;
+        }
+        return false; // Insufficient stock or item not found
+    }
+
+    /**
+     * Increase stock quantity when items are purchased (used by purchase)
+     */
+    @Transactional
+    public void increaseStock(String itemName, int quantity, double price) {
+        Item item = itemDao.getItemByName(itemName);
+        if (item != null) {
+            // Item exists, increase quantity and update price if different
+            item.setQuantity(item.getQuantity() + quantity);
+            item.setPrice(price); // Update to latest purchase price
+            itemDao.updateItem(item);
+        } else {
+            // Item doesn't exist, create new item
+            addItem(itemName, quantity, price);
+        }
+    }
+
+    /**
+     * Check if sufficient stock is available
+     */
+    @Transactional(readOnly = true)
+    public boolean isStockAvailable(String itemName, int quantity) {
+        Item item = itemDao.getItemByName(itemName);
+        return item != null && item.getQuantity() >= quantity;
+    }
+
+    /**
+     * Get item by name
+     */
+    @Transactional(readOnly = true)
+    public Item getItemByName(String name) {
+        return itemDao.getItemByName(name);
+    }
 }

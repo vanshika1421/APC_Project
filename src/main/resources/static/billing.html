@@ -348,6 +348,34 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Item Selection Styles */
+        .item-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: center;
+        }
+
+        .item-row input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .item-row button {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .item-row button.remove {
+            background: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -404,9 +432,22 @@
                     <label for="dueDate">Due Date</label>
                     <input type="date" id="dueDate" name="dueDate">
                 </div>
+                <!-- Item Selection for Integrated Billing -->
                 <div class="form-group">
-                    <label for="totalAmount">Total Amount</label>
-                    <input type="number" id="totalAmount" name="totalAmount" step="0.01" required>
+                    <label>Items to Sell (Optional - for integrated inventory)</label>
+                    <div id="itemsContainer">
+                        <div class="item-row">
+                            <input type="text" placeholder="Item Name" id="itemName0" />
+                            <input type="number" placeholder="Quantity" id="itemQty0" min="1" />
+                            <button type="button" onclick="addItemRow()">+</button>
+                        </div>
+                    </div>
+                    <small>Leave empty to use manual total amount below</small>
+                </div>
+                <div class="form-group">
+                    <label for="totalAmount">Total Amount (Manual Entry)</label>
+                    <input type="number" id="totalAmount" name="totalAmount" step="0.01">
+                    <small>Auto-calculated if items are selected above</small>
                 </div>
                 <div class="form-group">
                     <label for="invoiceStatus">Status</label>
@@ -557,6 +598,47 @@
             contentArea.innerHTML = invoicesHtml;
         }
 
+        // Item management functions for integrated billing
+        let itemRowCount = 1;
+
+        function addItemRow() {
+            const container = document.getElementById('itemsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <input type="text" placeholder="Item Name" id="itemName${itemRowCount}" />
+                <input type="number" placeholder="Quantity" id="itemQty${itemRowCount}" min="1" />
+                <button type="button" class="remove" onclick="removeItemRow(this)">-</button>
+            `;
+            container.appendChild(newRow);
+            itemRowCount++;
+        }
+
+        function removeItemRow(button) {
+            button.parentElement.remove();
+        }
+
+        function collectItems() {
+            const items = {};
+            const itemRows = document.querySelectorAll('.item-row');
+            
+            for (let row of itemRows) {
+                const nameInput = row.querySelector('input[type="text"]');
+                const qtyInput = row.querySelector('input[type="number"]');
+                
+                if (nameInput && qtyInput && nameInput.value.trim() && qtyInput.value) {
+                    const itemName = nameInput.value.trim();
+                    const quantity = parseInt(qtyInput.value);
+                    
+                    if (quantity > 0) {
+                        items[itemName] = (items[itemName] || 0) + quantity;
+                    }
+                }
+            }
+            
+            return Object.keys(items).length > 0 ? items : null;
+        }
+
         function showCreateInvoiceForm() {
             currentEditingInvoiceId = null;
             document.getElementById('formTitle').textContent = 'Create New Invoice';
@@ -603,15 +685,23 @@
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const items = collectItems(); // Get selected items
+            
             const invoiceData = {
                 customerName: formData.get('customerName'),
                 customerEmail: formData.get('customerEmail'),
                 date: formData.get('date') + 'T00:00:00.000Z',
                 dueDate: formData.get('dueDate') ? formData.get('dueDate') + 'T00:00:00.000Z' : null,
-                totalAmount: parseFloat(formData.get('totalAmount')),
                 status: formData.get('status'),
                 notes: formData.get('notes')
             };
+
+            // Add items for integrated billing or manual total amount
+            if (items) {
+                invoiceData.items = items; // This will trigger integrated billing
+            } else {
+                invoiceData.totalAmount = parseFloat(formData.get('totalAmount')); // Manual entry
+            }
 
             try {
                 let response;
