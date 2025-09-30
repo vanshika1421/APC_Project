@@ -1,7 +1,6 @@
 package com.apc.purchase;
 
-import com.apc.purchase.PurchaseDao;
-import com.apc.purchase.Purchase;
+
 import com.apc.inventory.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
