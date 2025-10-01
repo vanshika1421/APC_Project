@@ -1,0 +1,21 @@
+# Maven build files
+target/
+*.class
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Application specific
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Security
+application-local.properties
