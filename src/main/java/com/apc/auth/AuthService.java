@@ -17,7 +17,7 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public boolean authenticate(String username, String password) {
-        User user = userDao.getUserByUsername(username);
+        User user = userDao.findByUsername(username).orElse(null);
         String hashedPassword = hashPassword(password);
         return user != null && user.getPassword().equals(hashedPassword);
     }
@@ -26,7 +26,7 @@ public class AuthService {
     public void register(String username, String password) {
         String hashedPassword = hashPassword(password);
         User user = new User(username, hashedPassword);
-        userDao.saveUser(user);
+        userDao.save(user);
     }
 
     public String hashPassword(String password) {

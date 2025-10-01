@@ -16,9 +16,9 @@
     <packaging>jar</packaging>
     
     <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
-        <java.version>23</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
     </properties>
     
     <dependencies>
@@ -47,11 +47,10 @@
             <scope>runtime</scope>
         </dependency>
         
-        <!-- MySQL Connector (kept for production use) -->
+        <!-- MongoDB Driver -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         
         <!-- Spring Boot Test -->

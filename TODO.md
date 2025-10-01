@@ -1,0 +1,3 @@
+- [x] Fix InventoryController.java: Change @PathVariable int id to String in updateItem and deleteItem methods
+- [x] Fix UserController.java: Change UserSummary.id to String, update constructor, getters/setters, and mapping in getAllUsers()
+- [x] Build project to verify errors are resolved

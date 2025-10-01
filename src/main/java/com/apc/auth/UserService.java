@@ -2,14 +2,14 @@ package com.apc.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
-    
+
     @Autowired
-    private UserDao userDao;
+    private UserDao userRepository;
     
     @Autowired
     private AuthService authService;
@@ -17,31 +17,27 @@ public class UserService {
     /**
      * Get all users
      */
-    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
-        return userDao.getAllUsers();
+        return userRepository.findAll();
     }
 
     /**
      * Get user by username
      */
-    @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
-        return userDao.getUserByUsername(username);
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     /**
      * Check if user exists
      */
-    @Transactional(readOnly = true)
     public boolean userExists(String username) {
-        return userDao.getUserByUsername(username) != null;
+        return userRepository.findByUsername(username).isPresent();
     }
 
     /**
      * Create new user
      */
-    @Transactional
     public void createUser(String username, String password) {
         if (userExists(username)) {
             throw new RuntimeException("User already exists: " + username);
@@ -52,33 +48,30 @@ public class UserService {
     /**
      * Update user password
      */
-    @Transactional
     public void updateUserPassword(String username, String newPassword) {
-        User user = userDao.getUserByUsername(username);
+        User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
         // Use AuthService to hash the password properly
         user.setPassword(authService.hashPassword(newPassword));
-        userDao.updateUser(user);
+        userRepository.save(user);
     }
 
     /**
      * Delete user
      */
-    @Transactional
     public void deleteUser(String username) {
-        User user = userDao.getUserByUsername(username);
+        User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
-            userDao.deleteUser(user);
+            userRepository.delete(user);
         }
     }
 
     /**
      * Get user count
      */
-    @Transactional(readOnly = true)
     public long getUserCount() {
-        return userDao.getUserCount();
+        return userRepository.count();
     }
 }

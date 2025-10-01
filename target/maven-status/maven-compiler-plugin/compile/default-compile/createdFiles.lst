@@ -1,6 +1,7 @@
 com\apc\controller\UserController$UpdatePasswordRequest.class
 com\apc\auth\UserService.class
 com\apc\config\DataInitializer.class
+com\apc\dto\RefreshTokenRequest.class
 com\apc\auth\User.class
 com\apc\controller\AuthController$LoginRequest.class
 com\apc\controller\InventoryController.class
@@ -16,8 +17,9 @@ com\apc\controller\BillingController.class
 com\apc\controller\BillingController$InvoiceRequest.class
 com\apc\controller\InventoryController$ItemRequest.class
 com\apc\controller\UserController$UserSummary.class
-com\apc\inventory\dao\ItemDao.class
 com\apc\purchase\Purchase.class
+com\apc\security\JwtAuthenticationFilter.class
+com\apc\security\JwtUtil.class
 com\apc\controller\UserController.class
 com\apc\billing\service\BillingService.class
 com\apc\controller\AuthController$AuthResponse.class
@@ -26,5 +28,7 @@ com\apc\billing\model\Invoice.class
 com\apc\controller\PurchaseController$PurchaseRequest.class
 com\apc\controller\UserController$CreateUserRequest.class
 com\apc\purchase\PurchaseService.class
+com\apc\inventory\dao\ItemRepository.class
 com\apc\inventory\service\InventoryService.class
+com\apc\dto\JwtResponse.class
 com\apc\billing\dao\InvoiceDao.class

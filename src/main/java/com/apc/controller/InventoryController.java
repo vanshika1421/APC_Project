@@ -37,7 +37,7 @@ public class InventoryController {
     }
 
     @PutMapping("/items/{id}")
-    public ResponseEntity<String> updateItem(@PathVariable int id, @RequestBody ItemRequest request) {
+    public ResponseEntity<String> updateItem(@PathVariable String id, @RequestBody ItemRequest request) {
         try {
             inventoryService.updateItem(id, request.getQuantity(), request.getPrice());
             return ResponseEntity.ok("Item updated successfully");
@@ -47,7 +47,7 @@ public class InventoryController {
     }
 
     @DeleteMapping("/items/{id}")
-    public ResponseEntity<String> deleteItem(@PathVariable int id) {
+    public ResponseEntity<String> deleteItem(@PathVariable String id) {
         try {
             System.out.println("Attempting to delete item with ID: " + id);
             inventoryService.removeItem(id);

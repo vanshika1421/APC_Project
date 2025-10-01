@@ -1,64 +1,59 @@
 package com.apc.inventory.service;
 
-import com.apc.inventory.dao.ItemDao;
+import com.apc.inventory.dao.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.apc.inventory.model.Item;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InventoryService {
     @Autowired
-    private ItemDao itemDao;
+    private ItemRepository itemRepository;
 
-    public void setItemDao(ItemDao itemDao) {
-        this.itemDao = itemDao;
-    }
-
-    @Transactional
     public void addItem(String name, int quantity, double price) {
         Item item = new Item(name, quantity, price);
-        itemDao.saveItem(item);
+        itemRepository.save(item);
     }
 
-    @Transactional(readOnly = true)
     public List<Item> listItems() {
-        return itemDao.getAllItems();
+        return itemRepository.findAll();
     }
 
-    @Transactional
-    public void updateItem(int id, int quantity, double price) {
-        Item item = itemDao.getItemById(id);
-        if (item != null) {
+    public void updateItem(String id, int quantity, double price) {
+        Optional<Item> itemOpt = itemRepository.findById(id);
+        if (itemOpt.isPresent()) {
+            Item item = itemOpt.get();
             item.setQuantity(quantity);
             item.setPrice(price);
-            itemDao.updateItem(item);
+            itemRepository.save(item);
         }
     }
 
-    @Transactional
-    public void removeItem(int id) {
-        Item item = itemDao.getItemById(id);
-        if (item != null) {
-            itemDao.deleteItem(item);
+    public void removeItem(String id) {
+        Optional<Item> itemOpt = itemRepository.findById(id);
+        if (itemOpt.isPresent()) {
+            itemRepository.delete(itemOpt.get());
         } else {
             throw new RuntimeException("Item with ID " + id + " not found");
         }
     }
 
     // ===== INTEGRATED STOCK MANAGEMENT METHODS =====
-    
+
     /**
      * Reduce stock quantity when items are sold (used by billing)
      */
-    @Transactional
     public boolean reduceStock(String itemName, int quantity) {
-        Item item = itemDao.getItemByName(itemName);
-        if (item != null && item.getQuantity() >= quantity) {
-            item.setQuantity(item.getQuantity() - quantity);
-            itemDao.updateItem(item);
-            return true;
+        Optional<Item> itemOpt = itemRepository.findByName(itemName);
+        if (itemOpt.isPresent()) {
+            Item item = itemOpt.get();
+            if (item.getQuantity() >= quantity) {
+                item.setQuantity(item.getQuantity() - quantity);
+                itemRepository.save(item);
+                return true;
+            }
         }
         return false; // Insufficient stock or item not found
     }
@@ -66,14 +61,14 @@ public class InventoryService {
     /**
      * Increase stock quantity when items are purchased (used by purchase)
      */
-    @Transactional
     public void increaseStock(String itemName, int quantity, double price) {
-        Item item = itemDao.getItemByName(itemName);
-        if (item != null) {
+        Optional<Item> itemOpt = itemRepository.findByName(itemName);
+        if (itemOpt.isPresent()) {
+            Item item = itemOpt.get();
             // Item exists, increase quantity and update price if different
             item.setQuantity(item.getQuantity() + quantity);
             item.setPrice(price); // Update to latest purchase price
-            itemDao.updateItem(item);
+            itemRepository.save(item);
         } else {
             // Item doesn't exist, create new item
             addItem(itemName, quantity, price);
@@ -83,17 +78,15 @@ public class InventoryService {
     /**
      * Check if sufficient stock is available
      */
-    @Transactional(readOnly = true)
     public boolean isStockAvailable(String itemName, int quantity) {
-        Item item = itemDao.getItemByName(itemName);
-        return item != null && item.getQuantity() >= quantity;
+        Optional<Item> itemOpt = itemRepository.findByName(itemName);
+        return itemOpt.isPresent() && itemOpt.get().getQuantity() >= quantity;
     }
 
     /**
      * Get item by name
      */
-    @Transactional(readOnly = true)
     public Item getItemByName(String name) {
-        return itemDao.getItemByName(name);
+        return itemRepository.findByName(name).orElse(null);
     }
 }
