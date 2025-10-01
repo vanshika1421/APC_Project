@@ -231,10 +231,10 @@
                     <p>Generate bills, view sales, and create reports</p>
                 </div>
 
-                <div class="main-card" onclick="openProductsManagement()">
-                    <div class="icon">�</div>
-                    <h3>Products Management</h3>
-                    <p>Add, edit, and manage your product catalog</p>
+                <div class="main-card" onclick="openPurchaseManagement()">
+                    <div class="icon">🛒</div>
+                    <h3>Purchase</h3>
+                    <p>Manage purchases and procurement activities</p>
                 </div>
             </div>
         </div>
@@ -243,12 +243,12 @@
             <h3>Quick Access</h3>
             
             <div class="section">
-                <h4>📦 Product Management</h4>
+                <h4>� Purchase Management</h4>
                 <div class="action-links">
-                    <a href="#" class="action-link blue" onclick="viewAllProducts()">📋 View All Products</a>
-                    <a href="#" class="action-link green" onclick="addProduct()">➕ Add Product</a>
-                    <a href="#" class="action-link orange" onclick="updateProducts()">✏️ Update Products</a>
-                    <a href="#" class="action-link red" onclick="deleteProducts()">🗑️ Delete Products</a>
+                    <a href="#" class="action-link blue" onclick="viewAllPurchases()">📋 View All Purchases</a>
+                    <a href="#" class="action-link green" onclick="addPurchase()">➕ Add Purchase</a>
+                    <a href="#" class="action-link orange" onclick="updatePurchases()">✏️ Update Purchases</a>
+                    <a href="#" class="action-link red" onclick="deletePurchases()">🗑️ Delete Purchases</a>
                 </div>
             </div>
 
@@ -297,25 +297,25 @@
             window.location.href = '/billing.html';
         }
 
-        function openProductsManagement() {
-            window.location.href = '/inventory.html'; // Same as inventory for now
+        function openPurchaseManagement() {
+            window.location.href = '/purchase.html';
         }
 
         // Quick access functions
-        function viewAllProducts() {
-            window.location.href = '/inventory.html';
+        function viewAllPurchases() {
+            window.location.href = '/purchase.html';
         }
 
-        function addProduct() {
-            window.location.href = '/inventory.html';
+        function addPurchase() {
+            window.location.href = '/purchase.html';
         }
 
-        function updateProducts() {
-            window.location.href = '/inventory.html';
+        function updatePurchases() {
+            window.location.href = '/purchase.html';
         }
 
-        function deleteProducts() {
-            window.location.href = '/inventory.html';
+        function deletePurchases() {
+            window.location.href = '/purchase.html';
         }
 
         function manageItems() {
