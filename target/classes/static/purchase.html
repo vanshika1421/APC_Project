@@ -403,11 +403,11 @@
                     <input type="number" id="quantity" name="quantity" required min="1">
                 </div>
                 <div class="form-group">
-                    <label for="price">Unit Price</label>
+                    <label for="price">Unit Price (₹)</label>
                     <input type="number" id="price" name="price" step="0.01" required min="0">
                 </div>
                 <div class="form-group">
-                    <label for="totalCost">Total Cost</label>
+                    <label for="totalCost">Total Cost (₹)</label>
                     <input type="number" id="totalCost" name="totalCost" step="0.01" readonly>
                 </div>
                 <div class="form-group">
@@ -540,8 +540,8 @@
                         <h4>${purchase.itemName}</h4>
                         <p><strong>Date:</strong> ${purchaseDate}</p>
                         <p><strong>Quantity:</strong> ${purchase.quantity}</p>
-                        <p><strong>Unit Price:</strong> $${purchase.price.toFixed(2)}</p>
-                        <p><strong>Total Cost:</strong> $${totalCost.toFixed(2)}</p>
+                        <p><strong>Unit Price:</strong> ₹${purchase.price.toFixed(2)}</p>
+                        <p><strong>Total Cost:</strong> ₹${totalCost.toFixed(2)}</p>
                         <span class="supplier-badge">📦 ${purchase.supplier}</span>
                         <div class="purchase-actions">
                             <button class="btn-small btn-view" onclick="viewPurchase(${purchase.id})">
@@ -695,8 +695,8 @@
                         <div>
                             <h4>Purchase Details</h4>
                             <p><strong>Quantity:</strong> ${purchase.quantity}</p>
-                            <p><strong>Unit Price:</strong> $${purchase.price.toFixed(2)}</p>
-                            <p><strong>Total Cost:</strong> $${totalCost.toFixed(2)}</p>
+                            <p><strong>Unit Price:</strong> ₹${purchase.price.toFixed(2)}</p>
+                            <p><strong>Total Cost:</strong> ₹${totalCost.toFixed(2)}</p>
                             <p><strong>Payment Method:</strong> ${purchase.paymentMethod || 'N/A'}</p>
                         </div>
                     </div>
@@ -798,7 +798,7 @@
                         </div>
                         <div class="summary-item">
                             <h4>Total Spent</h4>
-                            <p>$${totalSpent.toFixed(2)}</p>
+                            <p>₹${totalSpent.toFixed(2)}</p>
                         </div>
                         <div class="summary-item">
                             <h4>Unique Suppliers</h4>
@@ -816,7 +816,7 @@
                     ${supplierStats.map(stat => `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
                             <span><strong>${stat.supplier}</strong></span>
-                            <span>${stat.count} purchases - $${stat.total.toFixed(2)}</span>
+                            <span>${stat.count} purchases - ₹${stat.total.toFixed(2)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -867,7 +867,7 @@
                         <div class="purchase-card">
                             <h4>🏪 ${supplier.name}</h4>
                             <p><strong>Total Purchases:</strong> ${supplier.purchaseCount}</p>
-                            <p><strong>Total Spent:</strong> $${supplier.totalSpent.toFixed(2)}</p>
+                            <p><strong>Total Spent:</strong> ₹${supplier.totalSpent.toFixed(2)}</p>
                             <p><strong>Last Purchase:</strong> ${supplier.lastPurchaseDate}</p>
                             <p><strong>Items Supplied:</strong></p>
                             <div style="margin-top: 0.5rem;">
