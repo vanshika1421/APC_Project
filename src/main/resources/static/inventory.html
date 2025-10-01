@@ -470,10 +470,10 @@
                         <p><strong>Quantity:</strong> ${item.quantity}</p>
                         <p><strong>Total Value:</strong> ₹${(item.price * item.quantity).toFixed(2)}</p>
                         <div class="item-actions">
-                            <button class="btn-small btn-edit" onclick="editItem(${item.id}, '${item.name}', ${item.price}, ${item.quantity})">
+                            <button class="btn-small btn-edit" onclick="editItem('${item.id}', '${item.name}', ${item.price}, ${item.quantity})">
                                 ✏️ Edit
                             </button>
-                            <button class="btn-small btn-delete" onclick="deleteItem(${item.id}, '${item.name}')">
+                            <button class="btn-small btn-delete" onclick="deleteItem('${item.id}', '${item.name}')">
                                 🗑️ Delete  
                             </button>
                         </div>
@@ -493,6 +493,7 @@
         }
 
         function editItem(id, name, price, quantity) {
+            console.log('Edit item called with:', {id, name, price, quantity});
             currentEditingItemId = id;
             document.getElementById('formTitle').textContent = 'Edit Item';
             document.getElementById('itemName').value = name;
@@ -547,20 +548,26 @@
         });
 
         async function deleteItem(itemId, itemName) {
+            console.log('Delete item called with:', {itemId, itemName});
             if (confirm(`Are you sure you want to delete "${itemName}"?`)) {
                 try {
+                    console.log('Sending DELETE request to:', `${API_BASE}/api/inventory/items/${itemId}`);
                     const response = await fetch(`${API_BASE}/api/inventory/items/${itemId}`, {
                         method: 'DELETE',
                         headers: getAuthHeaders()
                     });
 
+                    console.log('Delete response status:', response.status);
                     if (response.ok) {
                         showAlert('Item deleted successfully');
                         viewAllItems(); // Refresh the list
                     } else {
-                        throw new Error('Failed to delete item');
+                        const errorText = await response.text();
+                        console.error('Delete failed:', errorText);
+                        throw new Error('Failed to delete item: ' + errorText);
                     }
                 } catch (error) {
+                    console.error('Delete error:', error);
                     showAlert('Error deleting item: ' + error.message, 'error');
                 }
             }
