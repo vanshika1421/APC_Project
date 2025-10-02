@@ -46,6 +46,20 @@ public class InventoryController {
         }
     }
 
+    @GetMapping("/items/by-name/{name}")
+    public ResponseEntity<Item> getItemByName(@PathVariable String name) {
+        try {
+            Item item = inventoryService.getItemByName(name);
+            if (item != null) {
+                return ResponseEntity.ok(item);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @DeleteMapping("/items/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable Long id) {
         try {
