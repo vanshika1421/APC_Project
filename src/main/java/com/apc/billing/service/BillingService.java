@@ -72,55 +72,55 @@ public class BillingService {
         } else {
             invoice = new Invoice(totalAmount, new Date());
         }
-        invoiceDao.saveInvoice(invoice);
+        invoiceDao.save(invoice);
         return true;
     }
 
     @Transactional
     public void createInvoice(double totalAmount) {
         Invoice invoice = new Invoice(totalAmount, new Date());
-        invoiceDao.saveInvoice(invoice);
+        invoiceDao.save(invoice);
     }
 
     @Transactional(readOnly = true)
     public List<Invoice> listInvoices() {
-        return invoiceDao.getAllInvoices();
+        return invoiceDao.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Invoice getInvoiceById(int id) {
-        return invoiceDao.getInvoiceById(id);
+    public Invoice getInvoiceById(String id) {
+        return invoiceDao.findById(id).orElse(null);
     }
 
     @Transactional
-    public void updateInvoice(int id, double totalAmount) {
-        Invoice invoice = invoiceDao.getInvoiceById(id);
+    public void updateInvoice(String id, double totalAmount) {
+        Invoice invoice = invoiceDao.findById(id).orElse(null);
         if (invoice != null) {
             invoice.setTotalAmount(totalAmount);
-            invoiceDao.updateInvoice(invoice);
+            invoiceDao.save(invoice);
         }
     }
 
     @Transactional
-    public void removeInvoice(int id) {
-        Invoice invoice = invoiceDao.getInvoiceById(id);
+    public void removeInvoice(String id) {
+        Invoice invoice = invoiceDao.findById(id).orElse(null);
         if (invoice != null) {
-            invoiceDao.deleteInvoice(invoice);
+            invoiceDao.delete(invoice);
         }
     }
     
     @Transactional
     public void createInvoiceWithDetails(Object requestDetails) {
         Invoice invoice = createInvoiceWithCustomerDetails(0.0, requestDetails);
-        invoiceDao.saveInvoice(invoice);
+        invoiceDao.save(invoice);
     }
     
     @Transactional
-    public void updateInvoiceWithDetails(int id, Object requestDetails) {
-        Invoice invoice = invoiceDao.getInvoiceById(id);
+    public void updateInvoiceWithDetails(String id, Object requestDetails) {
+        Invoice invoice = invoiceDao.findById(id).orElse(null);
         if (invoice != null) {
             updateInvoiceFromRequest(invoice, requestDetails);
-            invoiceDao.updateInvoice(invoice);
+            invoiceDao.save(invoice);
         }
     }
     
