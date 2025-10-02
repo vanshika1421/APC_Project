@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APC Inventory & Billing System - Login</title>
+    <title>Inventory & Billing System - Login</title>
     <style>
         * {
             margin: 0;
@@ -239,9 +239,14 @@
                     if (response.ok && data.success) {
                         showAlert('Login successful! Redirecting to dashboard...', 'success');
                         
-                        // Store credentials for API calls
-                        localStorage.setItem('username', username);
-                        localStorage.setItem('password', password);
+                        // Store JWT tokens for API calls
+                        localStorage.setItem('accessToken', data.accessToken);
+                        localStorage.setItem('refreshToken', data.refreshToken);
+                        localStorage.setItem('username', data.username);
+                        localStorage.setItem('tokenType', data.tokenType);
+                        
+                        // Clear old credentials if they exist
+                        localStorage.removeItem('password');
                         
                         // Redirect to dashboard after success
                         setTimeout(() => {
@@ -262,6 +267,8 @@
             // This ensures a fresh login experience
             localStorage.removeItem('username');
             localStorage.removeItem('password');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
         });
     </script>
 </body>

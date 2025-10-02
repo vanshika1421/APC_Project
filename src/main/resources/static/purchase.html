@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Management - APC System</title>
+    <title>Purchase Management System</title>
     <style>
         * {
             margin: 0;
@@ -437,7 +437,14 @@
         let currentEditingPurchaseId = null;
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Skip authentication check since SecurityConfig allows all requests
+            // Check authentication
+            const accessToken = localStorage.getItem('accessToken');
+            const username = localStorage.getItem('username');
+            
+            if (!accessToken || !username) {
+                window.location.href = '/login.html';
+                return;
+            }
             
             // Set default date to today
             document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
@@ -458,8 +465,10 @@
         }
 
         function getAuthHeaders() {
-            // Since authentication is disabled in SecurityConfig, we don't need auth headers
+            const accessToken = localStorage.getItem('accessToken');
+            const tokenType = localStorage.getItem('tokenType') || 'Bearer';
             return {
+                'Authorization': tokenType + ' ' + accessToken,
                 'Content-Type': 'application/json'
             };
         }
@@ -478,7 +487,10 @@
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('username');
-                localStorage.removeItem('password');
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('tokenType');
+                localStorage.removeItem('password'); // Remove old password if exists
                 window.location.href = '/login.html';
             }
         }

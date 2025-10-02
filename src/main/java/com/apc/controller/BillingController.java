@@ -52,6 +52,7 @@ public class BillingController {
                 billingService.createInvoiceWithDetails(request);
                 return ResponseEntity.ok("Invoice created successfully");
             }
+            
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error creating invoice: " + e.getMessage());
         }

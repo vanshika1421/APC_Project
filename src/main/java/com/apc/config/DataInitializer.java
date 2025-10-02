@@ -27,15 +27,15 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Creating default users...");
             
             // Create admin user
-            userService.createUser("admin", "admin123");
+            userService.createUser("Vishakha", "123456");
             System.out.println("Created admin user: admin/admin123");
             
             // Create demo user
-            userService.createUser("vanshika", "password");
+            userService.createUser("Vanshika", "password");
             System.out.println("Created demo user: vanshika/password");
             
             // Create test user
-            userService.createUser("test", "test123");
+            userService.createUser("Ravneet", "123456");
             System.out.println("Created test user: test/test123");
             
             System.out.println("Default users created successfully!");

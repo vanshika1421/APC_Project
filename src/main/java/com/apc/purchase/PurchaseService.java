@@ -20,17 +20,13 @@ public class PurchaseService {
         this.purchaseDao = purchaseDao;
     }
 
-    /**
-     * Add purchase with integrated inventory management
-     * This will both record the purchase and update inventory stock
-     */
     @Transactional
     public void addPurchase(String supplier, String itemName, int quantity, double price, String paymentMethod) {
-        // Record the purchase transaction
+       
         Purchase purchase = new Purchase(supplier, itemName, quantity, price, new Date(), paymentMethod);
         purchaseDao.savePurchase(purchase);
         
-        // Update inventory stock (increase quantity)
+
         inventoryService.increaseStock(itemName, quantity, price);
     }
 
@@ -48,10 +44,10 @@ public class PurchaseService {
     public void updatePurchase(String id, String supplier, String itemName, int quantity, double price, String paymentMethod) {
         Purchase purchase = purchaseDao.getPurchaseById(id);
         if (purchase != null) {
-            // Calculate inventory difference
+            
             int oldQuantity = purchase.getQuantity();
             
-            // Update purchase details
+
             purchase.setSupplier(supplier);
             purchase.setItemName(itemName);
             purchase.setQuantity(quantity);
@@ -61,7 +57,7 @@ public class PurchaseService {
             
             purchaseDao.updatePurchase(purchase);
             
-            // Update inventory: subtract old quantity and add new quantity
+            
             inventoryService.reduceStock(purchase.getItemName(), oldQuantity);
             inventoryService.increaseStock(itemName, quantity, price);
         }
@@ -71,7 +67,7 @@ public class PurchaseService {
     public void deletePurchase(String id) {
         Purchase purchase = purchaseDao.getPurchaseById(id);
         if (purchase != null) {
-            // Decrease inventory stock when purchase is deleted
+           
             inventoryService.reduceStock(purchase.getItemName(), purchase.getQuantity());
             purchaseDao.deletePurchase(purchase);
         }

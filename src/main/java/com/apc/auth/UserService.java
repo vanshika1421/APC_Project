@@ -1,7 +1,9 @@
 package com.apc.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 @Service
@@ -11,7 +13,8 @@ public class UserService {
     private UserDao userRepository;
     
     @Autowired
-    private AuthService authService;
+    @Lazy
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Get all users
@@ -41,7 +44,9 @@ public class UserService {
         if (userExists(username)) {
             throw new RuntimeException("User already exists: " + username);
         }
-        authService.register(username, password);
+        String hashedPassword = passwordEncoder.encode(password);
+        User user = new User(username, hashedPassword);
+        userRepository.save(user);
     }
 
     /**
@@ -52,8 +57,7 @@ public class UserService {
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
-        // Use AuthService to hash the password properly
-        user.setPassword(authService.hashPassword(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
