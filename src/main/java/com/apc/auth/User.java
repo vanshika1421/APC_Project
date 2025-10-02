@@ -20,11 +20,7 @@ public class User {
         this.password = password;
     }
 
-<<<<<<< HEAD
-   
-=======
 
->>>>>>> 250116b3bae50d3588dd02a7e959dfbc8f69ae6d
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }

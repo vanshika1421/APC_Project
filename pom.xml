@@ -40,11 +40,7 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         
-<<<<<<< HEAD
-        <!-- MySQL Database -->
-=======
         <!-- MySQL Connector -->
->>>>>>> 250116b3bae50d3588dd02a7e959dfbc8f69ae6d
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
