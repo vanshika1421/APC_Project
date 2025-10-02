@@ -21,7 +21,7 @@ public class InventoryService {
         return itemRepository.findAll();
     }
 
-    public void updateItem(String id, int quantity, double price) {
+    public void updateItem(Long id, int quantity, double price) {
         Optional<Item> itemOpt = itemRepository.findById(id);
         if (itemOpt.isPresent()) {
             Item item = itemOpt.get();
@@ -31,7 +31,7 @@ public class InventoryService {
         }
     }
 
-    public void removeItem(String id) {
+    public void removeItem(Long id) {
         Optional<Item> itemOpt = itemRepository.findById(id);
         if (itemOpt.isPresent()) {
             itemRepository.delete(itemOpt.get());

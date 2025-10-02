@@ -1,11 +1,11 @@
 package com.apc.auth;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserDao extends MongoRepository<User, String> {
+public interface UserDao extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
-    // MongoRepository already provides findAll() and count() methods
+    // JpaRepository already provides findAll() and count() methods
 }

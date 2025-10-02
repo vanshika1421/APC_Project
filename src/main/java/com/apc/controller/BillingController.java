@@ -27,7 +27,7 @@ public class BillingController {
     }
 
     @GetMapping("/invoices/{id}")
-    public ResponseEntity<Invoice> getInvoiceById(@PathVariable String id) {
+    public ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
         try {
             Invoice invoice = billingService.getInvoiceById(id);
             if (invoice != null) {
@@ -58,7 +58,7 @@ public class BillingController {
     }
 
     @PutMapping("/invoices/{id}")
-    public ResponseEntity<String> updateInvoice(@PathVariable String id, @RequestBody InvoiceRequest request) {
+    public ResponseEntity<String> updateInvoice(@PathVariable Long id, @RequestBody InvoiceRequest request) {
         try {
             billingService.updateInvoiceWithDetails(id, request);
             return ResponseEntity.ok("Invoice updated successfully");
@@ -68,7 +68,7 @@ public class BillingController {
     }
 
     @DeleteMapping("/invoices/{id}")
-    public ResponseEntity<String> deleteInvoice(@PathVariable String id) {
+    public ResponseEntity<String> deleteInvoice(@PathVariable Long id) {
         try {
             billingService.removeInvoice(id);
             return ResponseEntity.ok("Invoice deleted successfully");

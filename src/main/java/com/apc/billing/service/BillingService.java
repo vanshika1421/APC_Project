@@ -88,12 +88,12 @@ public class BillingService {
     }
 
     @Transactional(readOnly = true)
-    public Invoice getInvoiceById(String id) {
+    public Invoice getInvoiceById(Long id) {
         return invoiceDao.findById(id).orElse(null);
     }
 
     @Transactional
-    public void updateInvoice(String id, double totalAmount) {
+    public void updateInvoice(Long id, double totalAmount) {
         Invoice invoice = invoiceDao.findById(id).orElse(null);
         if (invoice != null) {
             invoice.setTotalAmount(totalAmount);
@@ -102,7 +102,7 @@ public class BillingService {
     }
 
     @Transactional
-    public void removeInvoice(String id) {
+    public void removeInvoice(Long id) {
         Invoice invoice = invoiceDao.findById(id).orElse(null);
         if (invoice != null) {
             invoiceDao.delete(invoice);
@@ -116,7 +116,7 @@ public class BillingService {
     }
     
     @Transactional
-    public void updateInvoiceWithDetails(String id, Object requestDetails) {
+    public void updateInvoiceWithDetails(Long id, Object requestDetails) {
         Invoice invoice = invoiceDao.findById(id).orElse(null);
         if (invoice != null) {
             updateInvoiceFromRequest(invoice, requestDetails);
