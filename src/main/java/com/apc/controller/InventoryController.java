@@ -39,7 +39,7 @@ public class InventoryController {
     @PutMapping("/items/{id}")
     public ResponseEntity<String> updateItem(@PathVariable Long id, @RequestBody ItemRequest request) {
         try {
-            inventoryService.updateItem(id, request.getQuantity(), request.getPrice());
+            inventoryService.updateItem(Long.valueOf(id), request.getQuantity(), request.getPrice());
             return ResponseEntity.ok("Item updated successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error updating item: " + e.getMessage());
@@ -50,7 +50,7 @@ public class InventoryController {
     public ResponseEntity<String> deleteItem(@PathVariable Long id) {
         try {
             System.out.println("Attempting to delete item with ID: " + id);
-            inventoryService.removeItem(id);
+            inventoryService.removeItem(Long.valueOf(id));
             System.out.println("Successfully deleted item with ID: " + id);
             return ResponseEntity.ok("Item deleted successfully");
         } catch (Exception e) {
