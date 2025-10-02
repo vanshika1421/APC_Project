@@ -437,14 +437,7 @@
         let currentEditingPurchaseId = null;
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Check authentication
-            const username = localStorage.getItem('username');
-            const password = localStorage.getItem('password');
-            
-            if (!username || !password) {
-                window.location.href = '/login.html';
-                return;
-            }
+            // Skip authentication check since SecurityConfig allows all requests
             
             // Set default date to today
             document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
@@ -465,10 +458,8 @@
         }
 
         function getAuthHeaders() {
-            const username = localStorage.getItem('username');
-            const password = localStorage.getItem('password');
+            // Since authentication is disabled in SecurityConfig, we don't need auth headers
             return {
-                'Authorization': 'Basic ' + btoa(username + ':' + password),
                 'Content-Type': 'application/json'
             };
         }
@@ -544,13 +535,13 @@
                         <p><strong>Total Cost:</strong> ₹${totalCost.toFixed(2)}</p>
                         <span class="supplier-badge">📦 ${purchase.supplier}</span>
                         <div class="purchase-actions">
-                            <button class="btn-small btn-view" onclick="viewPurchase(${purchase.id})">
+                            <button class="btn-small btn-view" onclick="viewPurchase('${purchase.id}')">
                                 👁️ View
                             </button>
-                            <button class="btn-small btn-edit" onclick="editPurchase(${purchase.id})">
+                            <button class="btn-small btn-edit" onclick="editPurchase('${purchase.id}')">
                                 ✏️ Edit
                             </button>
-                            <button class="btn-small btn-delete" onclick="deletePurchase(${purchase.id}, '${purchase.itemName}')">
+                            <button class="btn-small btn-delete" onclick="deletePurchase('${purchase.id}', '${purchase.itemName}')">
                                 🗑️ Delete  
                             </button>
                         </div>
@@ -572,33 +563,30 @@
 
         async function editPurchase(purchaseId) {
             try {
-                // Since we don't have individual purchase GET API, we'll get all and find the one
-                const response = await fetch(`${API_BASE}/api/purchases`, {
+                // Use the proper GET by ID endpoint
+                const response = await fetch(`${API_BASE}/api/purchases/${purchaseId}`, {
                     headers: getAuthHeaders()
                 });
                 
                 if (response.ok) {
-                    const purchases = await response.json();
-                    const purchase = purchases.find(p => p.id === purchaseId);
+                    const purchase = await response.json();
                     
-                    if (purchase) {
-                        currentEditingPurchaseId = purchaseId;
-                        document.getElementById('formTitle').textContent = 'Edit Purchase';
-                        
-                        // Populate form fields
-                        document.getElementById('itemName').value = purchase.itemName;
-                        document.getElementById('supplier').value = purchase.supplier;
-                        document.getElementById('purchaseDate').value = purchase.date ? purchase.date.split('T')[0] : '';
-                        document.getElementById('quantity').value = purchase.quantity;
-                        document.getElementById('price').value = purchase.price;
-                        document.getElementById('paymentMethod').value = purchase.paymentMethod || 'cash';
-                        document.getElementById('notes').value = purchase.notes || '';
-                        
-                        calculateTotalCost();
-                        document.getElementById('purchaseFormOverlay').style.display = 'flex';
-                    } else {
-                        throw new Error('Purchase not found');
-                    }
+                    currentEditingPurchaseId = purchaseId;
+                    document.getElementById('formTitle').textContent = 'Edit Purchase';
+                    
+                    // Populate form fields
+                    document.getElementById('itemName').value = purchase.itemName;
+                    document.getElementById('supplier').value = purchase.supplier;
+                    document.getElementById('purchaseDate').value = purchase.date ? purchase.date.split('T')[0] : '';
+                    document.getElementById('quantity').value = purchase.quantity;
+                    document.getElementById('price').value = purchase.price;
+                    document.getElementById('paymentMethod').value = purchase.paymentMethod || 'cash';
+                    document.getElementById('notes').value = purchase.notes || '';
+                    
+                    calculateTotalCost();
+                    document.getElementById('purchaseFormOverlay').style.display = 'flex';
+                } else if (response.status === 404) {
+                    throw new Error('Purchase not found');
                 } else {
                     throw new Error('Failed to load purchase details');
                 }
@@ -629,10 +617,12 @@
             try {
                 let response;
                 if (currentEditingPurchaseId) {
-                    // Note: The backend might not support PUT for purchases
-                    // This is a limitation we'll work with for now
-                    showAlert('Edit functionality may be limited in the current backend', 'error');
-                    return;
+                    // Update existing purchase using PUT endpoint
+                    response = await fetch(`${API_BASE}/api/purchases/${currentEditingPurchaseId}`, {
+                        method: 'PUT',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify(purchaseData)
+                    });
                 } else {
                     // Create new purchase
                     response = await fetch(`${API_BASE}/api/purchases`, {
@@ -656,19 +646,15 @@
 
         async function viewPurchase(purchaseId) {
             try {
-                const response = await fetch(`${API_BASE}/api/purchases`, {
+                const response = await fetch(`${API_BASE}/api/purchases/${purchaseId}`, {
                     headers: getAuthHeaders()
                 });
                 
                 if (response.ok) {
-                    const purchases = await response.json();
-                    const purchase = purchases.find(p => p.id === purchaseId);
-                    
-                    if (purchase) {
-                        displayPurchaseDetails(purchase);
-                    } else {
-                        throw new Error('Purchase not found');
-                    }
+                    const purchase = await response.json();
+                    displayPurchaseDetails(purchase);
+                } else if (response.status === 404) {
+                    throw new Error('Purchase not found');
                 } else {
                     throw new Error('Failed to load purchase details');
                 }
@@ -718,10 +704,17 @@
         async function deletePurchase(purchaseId, itemName) {
             if (confirm(`Are you sure you want to delete the purchase record for "${itemName}"?`)) {
                 try {
-                    // Note: Backend might not support DELETE for individual purchases
-                    showAlert('Delete functionality may be limited in the current backend', 'error');
-                    // For now, we'll just refresh the list
-                    // viewAllPurchases();
+                    const response = await fetch(`${API_BASE}/api/purchases/${purchaseId}`, {
+                        method: 'DELETE',
+                        headers: getAuthHeaders()
+                    });
+                    
+                    if (response.ok) {
+                        showAlert(`Successfully deleted purchase record for "${itemName}"`, 'success');
+                        viewAllPurchases(); // Refresh the list
+                    } else {
+                        throw new Error('Failed to delete purchase');
+                    }
                 } catch (error) {
                     showAlert('Error deleting purchase: ' + error.message, 'error');
                 }
